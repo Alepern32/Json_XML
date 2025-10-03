@@ -45,42 +45,63 @@ public class Cafe {
 
         // Crear XStream con driver JSON que permite lectura e escritura por igual 
         XStream xs = new XStream(new JettisonMappedXmlDriver());
-        xs.setMode(XStream.NO_REFERENCES); /*  Es un modo que representa como va a ser el objeto
+        xs.setMode(XStream.NO_REFERENCES);
+        /*  Es un modo que representa como va a ser el objeto
         por ejemplo: 
         .NO_REFENCES, usa referencias el objeto se escribe completo
         .ID_REFERENCES usa ids y referencias al objeto esto impide que haya duplicados
         .XPATH_RELATIVE_REFERENCES usa referencias de donde esta situado en el XML
-        */
+         */
 
-        /*  Usamos alias para simplificar el nombre de nuestro objeto ya 
+        /* Usamos alias para simplificar el nombre de nuestro objeto ya 
         que sino en nuestro Json se veria como org-emprendism.Tarea2  
         Ejemplo <org.emprendism.json> poniendo el alias <cafe> y definimos la clase Cafe.class*/
 
-        xs.alias("cafe", Cafe.class); 
-        
+        xs.alias("cafe", Cafe.class);
+
         xs.allowTypes(new Class[]{Cafe.class});
 
         // Escribir JSON 
-        try (FileWriter fw = new FileWriter("file.json")) { /* Cremos el fichero json */
-            xs.toXML(cafes, fw); /* Serealizamos el objeto */
-            System.out.println("Archivo se creo correctamente");
+        try (FileWriter fw = new FileWriter("file.json")) {
+            /* Creamos el fichero json */
+            xs.toXML(cafes, fw);
+            /* Serealizamos el objeto */
+            System.out.println("Archivo se creo correctamente con Xstream");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         // Leer Json
         try (FileReader fr = new FileReader("file.json")) {
+            /* Leemos el fichero json */
             Cafe[] cafesLeidos = (Cafe[]) xs.fromXML(fr);
             System.out.println("Cafes: ");
-            for (Cafe c : cafesLeidos) { /* Recorremos nuestros objetos */
+            for (Cafe c : cafesLeidos) {
+                /* Recorremos nuestros objetos */
                 System.out.println(c);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        // Gson 
+      //Escribir JSON en un archivo usando FileWriter
+      Gson gson = new Gson();
+        try (FileWriter fw = new FileWriter("file.json")) {
+            gson.toJson(cafes, fw);
+            System.out.println("Archivo JSON creado correctamente con Gson");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        Gson gson = new Gson();
+        //Leer JSON desde el archivo usando FileReader
+        try (FileReader fr = new FileReader("file.json")) {
+            Cafe[] cf = gson.fromJson(fr, Cafe[].class);
+            System.out.println("Cafes");
+            for (Cafe c : cf) {
+                System.out.println(c);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
